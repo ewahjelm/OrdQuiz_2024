@@ -1,6 +1,57 @@
 [
-    {"question" : "",
-    
-
+    {
+        "question": "Vilket av följande ord är en synonym till ordet 'enfaldig'?",
+        "options": [
+            "Inskränkt",
+            "Enväldig",
+            "Despotisk",
+            "Eftertänksam"
+        ],
+        "answer": "Inskränkt",
+        "trivia": ""
+    },
+    {
+        "question": "Vilket av följande ord är en synonym till ordet 'despotisk'?",
+        "options": [
+            "Dyster",
+            "Komplicerad",
+            "Inskränkt",
+            "Enväldig"
+        ],
+        "answer": "Enväldig",
+        "trivia": ""
+    },
+    { 
+        "question": "Att med humor och eftertanke ändra innehållet i en känd fras, titel eller dylikt kallas för en..",
+        "options": [
+            "Satir",
+            "Allegori",
+            "Travesti",
+            "Parodi"
+        ],
+        "answer": "Travesti",
+        "trivia": ""
+    },
+    {
+        "question": "Xenofobi har en person som är rädd för?",
+        "options": [
+            "Spindlar",
+            "Öppna platser",
+            "Främlingar",
+            "Solljus"
+        ],
+        "answer": "Främlingar",
+        "trivia": ""
+    },
+    {
+        "question": "Akrofobi är en fobi för vad då?",
+        "options": [
+            "Torgskräck",
+            "Spindelskräck",
+            "Höjdskräck",
+            "Vattenskräck"
+        ],
+        "answer": "Höjdskräck",
+        "trivia": ""
     }
 ]
