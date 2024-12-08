@@ -1,0 +1,39 @@
+/*
+element
+id
+klass
+child
+övrigt
+*/
+
+body {
+    padding: 15%;;
+    background-color: rgb(168, 207, 160);
+    width: 600px;
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+p {
+    color: rgb(177, 233, 198);
+    font-size: 20pt;
+}
+
+#root {
+    padding: 3%;
+    background-color: rgb(118, 76, 124);
+}
+
+.button {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: rgb(187, 176, 187);
+    font-size: 18pt;
+    padding: 2%;
+    /* margin-bottom: 5%; */
+}
+
+.header {
+    background-color: #F1F1F1;
+    text-align: center;
+    padding: 20px;
+}
