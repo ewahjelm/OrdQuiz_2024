@@ -20,10 +20,13 @@ p {
 }
 
 #root {
-    padding: 3%;
-    background-color: rgb(118, 76, 124);
+  background-color: rgb(190, 22, 22);
 }
 
+#question-block {
+    background-color: rgb(204, 160, 204);
+    padding: 10%;
+}
 .button {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     background-color: rgb(187, 176, 187);
