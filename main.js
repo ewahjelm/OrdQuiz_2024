@@ -1,10 +1,10 @@
 /* Vad ska köras onload?:
-Welcome message
+welcome()
 startbutton
 
 */
 var spaDiv = document.getElementById("root")
-const quizBank = "ordQuiz.json"
+const quizBankEndpoint = "ordQuiz.json"
 const elementBox = document.createElement("section");
 elementBox.id = "question-block";
 
@@ -33,13 +33,18 @@ function welcome(spaDiv) {
 }
 
 
-welcome(spaDiv);
-
 //hämtar frågebank från JSON-filen
-fetch(quizBank)
-    .then(response => response.json())
+const getQuizBank = async () => {
+    const quizBank = await fetch(quizBankEndpoint);
+if (quizBank.status !== 200) {
+    throw new Error( "Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
+}
+const quizData = await quizBank.json();
+return quizData;
+};
+    /* .then(response => response.json())
 
-    .then(quizData => runQuiz(quizData));
+    .then(quizData => runQuiz(quizData)); */
 
 
 function showQuestionBlock() {
@@ -63,3 +68,5 @@ function runQuiz(q) {
 
 
 };
+
+welcome(spaDiv);
