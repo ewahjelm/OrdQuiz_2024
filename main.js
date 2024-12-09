@@ -36,28 +36,29 @@ function welcome(spaDiv) {
 //hämtar frågebank från JSON-filen
 const getQuizBank = async () => {
     const quizBank = await fetch(quizBankEndpoint);
-if (quizBank.status !== 200) {
-    throw new Error( "Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
-}
-const quizData = await quizBank.json();
-return quizData;
+    if (quizBank.status !== 200) {
+        throw new Error("Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
+    }
+    const quizData = await quizBank.json();
+    return quizData;
 };
-    /* .then(response => response.json())
+/* .then(response => response.json())
 
-    .then(quizData => runQuiz(quizData)); */
+.then(quizData => runQuiz(quizData)); */
 
 
 function showQuestionBlock() {
     spaDiv.append(elementBox);
-   /*  for (i = 1; i < 5; i++) {
-        const answerButton = document.createElement("button");
-        answerButton.className = "button"
-        answerButton.id = `answer${i}`;
-    
-    } */
+
+    /*  for (i = 1; i < 5; i++) {
+         const answerButton = document.createElement("button");
+         answerButton.className = "button"
+         answerButton.id = `answer${i}`;
+     
+     } */
 }
 function clearDiv() {
-    elementBox.remove();
+    spaDiv.remove(elementBox);
 }
 
 
