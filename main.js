@@ -10,7 +10,7 @@ const spaDiv = document.getElementById("root")
 const quizBankEndpoint = "ordQuiz.json"
 const elementBox = document.createElement("section");
 elementBox.id = "question-block";
-const quizData = [];
+var quizData = [];
 
 //hämtar frågebank i bakgrunden från JSON-filen
 const getQuizBank = async () => {
@@ -18,16 +18,17 @@ const getQuizBank = async () => {
     if (quizBank.status !== 200) {
         throw new Error("Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
     }
-    quizData = await quizBank.json();
-    return quizData;
+    const data = await quizBank.json();
+    return data;
 };
 /* .then(response => response.json())
 
 .then(quizData => runQuiz(quizData)); */
 
+getQuizBank().then(data => quizData = data);
+welcome();
 
-
-function welcome(spaDiv) {
+function welcome() {
     spaDiv.append(elementBox);
 
     const welcomeMessage = document.createElement("p");
@@ -46,49 +47,55 @@ function welcome(spaDiv) {
     startQuizButton.addEventListener("click", function (e) {
         e.preventDefault();
         console.log("du har klickat")
-        clearDiv();
-        showQuestionBlock(quizData); //funkar inte än
-        return quizData;
+        clearDiv(); // funkar
+        const randomQuestion = getRandomQuestion(quizData); // funkar
+        showQuestionBlock(randomQuestion); //funkar inte än
+        // return ?;
     })
-}
-
-
-
-function createAnswerButtons() {
-    const answerButtons = [];
-    for (let i = 1; i < 5; i++) {
-        const button = document.createElement("button");
-        button.className = "button"
-        button.id = `answer${i}`;
-        answerButtons.push(button);
-    }
-
-}
-
-function showQuestionBlock(quizData) {
-    spaDiv.append(elementBox);
-
-    const questionText = "";
-    console.log(quizData);
-
-    // questionText = runQuiz(quizData);
-
-    elementBox.append();
 }
 
 function clearDiv() {
     spaDiv.remove(elementBox);
 }
 
-
-
-function runQuiz(q) {
+function getRandomQuestion(q) {
     const index = Math.floor(q.length * Math.random());
     console.log(q[index].question)
-
-
-
+    return q[index];
 };
 
-welcome(spaDiv);
-createAnswerButtons();
+
+function showQuestionBlock(indexedQuestion) {
+    spaDiv.append(elementBox);
+
+    const pQuestionText = document.createElement("p");
+    pQuestionText.innerText = indexedQuestion.question;
+    elementBox.append(pQuestionText);
+
+    console.log("showQuestionBlock", indexedQuestion);
+
+    // questionText = runQuiz(quizData);
+    createAnswerButtons(indexedQuestion);
+
+}
+
+function createAnswerButtons(indexedQuestion) {
+    const answerButtons = [];
+    for (let i = 0; i < indexedQuestion.options.length; i++) {
+        const button = document.createElement("button");
+        button.className = "button"
+        button.id = `answer${i}`;
+        button.innerText = `${indexedQuestion.options[i]}`
+        elementBox.append(button);
+        // answerButtons.push(button);
+    }
+    console.log("create AB", answerButtons)
+}
+
+
+
+
+
+
+
+
