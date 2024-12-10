@@ -8,8 +8,13 @@ welcome() display text & startbutton
 */
 const spaDiv = document.getElementById("root")
 const quizBankEndpoint = "ordQuiz.json"
-const elementBox = document.createElement("section");
-elementBox.id = "question-block";
+const elementBox1 = document.createElement("section");
+
+const elementBox2 = document.createElement("section");
+
+elementBox1.classList = "question-block";
+elementBox2.classList = "question-block";
+
 var quizData = [];
 
 //hämtar frågebank i bakgrunden från JSON-filen
@@ -29,7 +34,7 @@ getQuizBank().then(data => quizData = data);
 welcome();
 
 function welcome() {
-    spaDiv.append(elementBox);
+    spaDiv.append(elementBox1);
 
     const welcomeMessage = document.createElement("p");
     welcomeMessage.innerHTML = `Välkommen till mitt quiz <br> 
@@ -42,7 +47,7 @@ function welcome() {
     startQuizButton.innerText = "Start the quiz"
 
 
-    elementBox.append(welcomeMessage, startQuizButton);
+    elementBox1.append(welcomeMessage, startQuizButton);
 
     startQuizButton.addEventListener("click", function (e) {
         e.preventDefault();
@@ -55,7 +60,9 @@ function welcome() {
 }
 
 function clearDiv() {
-    spaDiv.remove(elementBox);
+    console.log("elementBox1", elementBox1)
+    elementBox1.remove();
+    console.log("elementBox1 efter remove", elementBox1)
 }
 
 function getRandomQuestion(q) {
@@ -66,11 +73,11 @@ function getRandomQuestion(q) {
 
 
 function showQuestionBlock(indexedQuestion) {
-    spaDiv.append(elementBox);
+    spaDiv.append(elementBox2);
 
     const pQuestionText = document.createElement("p");
     pQuestionText.innerText = indexedQuestion.question;
-    elementBox.append(pQuestionText);
+    elementBox2.append(pQuestionText);
 
     console.log("showQuestionBlock", indexedQuestion);
 
@@ -86,7 +93,7 @@ function createAnswerButtons(indexedQuestion) {
         button.className = "button"
         button.id = `answer${i}`;
         button.innerText = `${indexedQuestion.options[i]}`
-        elementBox.append(button);
+        elementBox2.append(button);
         // answerButtons.push(button);
     }
     console.log("create AB", answerButtons)

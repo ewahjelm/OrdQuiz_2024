@@ -7,7 +7,8 @@ child
 */
 
 body {
-    padding: 15%;;
+    padding: 15%;
+    ;
     background-color: rgb(168, 207, 160);
     width: 600px;
     text-align: center;
@@ -20,13 +21,14 @@ p {
 }
 
 #root {
-  background-color: rgb(190, 22, 22);
+    background-color: rgb(190, 22, 22);
 }
 
-#question-block {
+.question-block {
     background-color: rgb(204, 160, 204);
     padding: 10%;
 }
+
 .button {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     background-color: rgb(187, 176, 187);
