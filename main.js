@@ -1,9 +1,15 @@
 /* Vad ska köras hur?:
 onload
-welcome() display text & startbutton
-  startbutton, onclick:
-  remove welcome-block
-  create & append questionblock
+fetch json async
+    welcome() : add elementBox. display text & startbutton
+
+startbutton, onclick:
+getRandomQuestion() -> quizDataquestion[i]
+runQuiz() : starta timer på 10 sek
+
+  showQuestionBlock():  remove elementBox (containing welcome-block)
+                add elementBox (question-block)
+                create pQuestion with data
 
 */
 const spaDiv = document.getElementById("root")
@@ -53,10 +59,14 @@ function welcome() {
         e.preventDefault();
         console.log("du har klickat")
         clearDiv(); // funkar
-        const randomQuestion = getRandomQuestion(quizData); // funkar
-        showQuestionBlock(randomQuestion); //funkar inte än
+        const randomQuestion = getRandomQuestion(quizData); // funkar. MEN hur ska jag förhindra att det blir samma fråga två ggr.
+        showQuestionBlock(randomQuestion); //funkar 
         // return ?;
     })
+}
+
+function clickStart() {
+
 }
 
 function clearDiv() {
