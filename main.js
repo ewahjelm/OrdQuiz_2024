@@ -1,13 +1,16 @@
 /* Vad ska köras hur?:
 onload
-fetch json async
+getQuizBank() fetch json async -> sparar data i quizData
+OBS att data bara borde tilldelas här 1 gång men const funkar inte
     welcome() : add elementBox. display text & startbutton
 
-startbutton, onclick:
-getRandomQuestion() -> quizData.question[i]
-runQuiz() : starta timer på 10 sek
 
-  showQuestionBlock():  remove elementBox (containing welcome-block)
+
+startbutton, onclick:
+    getRandomQuestion() -> quizData.question[i]
+    runQuiz() : starta timer på 10 sek
+    clearDiv() remove elementBox (containing welcome-block)
+    showQuestionBlock():  
                 add elementBox (question-block)
                 create pQuestion with data from fetched quizData
                 create 4 buttons  - ta bort  o skapa igen . eller byt ut innehållet
@@ -16,13 +19,13 @@ runQuiz() : starta timer på 10 sek
 const spaDiv = document.getElementById("root")
 const quizBankEndpoint = "ordQuiz.json"
 const elementBox1 = document.createElement("section");
-
 const elementBox2 = document.createElement("section");
 
 elementBox1.classList = "question-block";
 elementBox2.classList = "question-block";
 
-var quizData = [];
+var quizData = [];  //borde vara const!
+// selected
 
 //hämtar frågebank i bakgrunden från JSON-filen
 const getQuizBank = async () => {
@@ -61,13 +64,21 @@ function welcome() {
         e.preventDefault();
         console.log("du har klickat")
         clearDiv(); // funkar
-        const randomQuestion = getRandomQuestion(quizData); // funkar. MEN hur ska jag förhindra att det blir samma fråga två ggr.
+
+        // INTE  BRA . Funkar. MEN hur ska jag förhindra att det blir samma fråga två ggr.
+        const randomQuestion = selectRandomQuestion(quizData);
         showQuestionBlock(randomQuestion); //funkar 
         // return ?;
     })
 }
 
 /* function clickStart() {
+clearDiv();
+selectRandomQuestion(quizData) -> 
+     lever vidare under frågeomgången som ? indexedQuestion eller randomQuestion !
+Ta bort frågan (objekt[index]) ur quizData
+
+
 
 } */
 
@@ -77,8 +88,8 @@ function clearDiv() {
     console.log("elementBox1 efter remove", elementBox1)
 }
 
-// OBS kommer att behöva säkerställa att inte en fråga kommer fleras ggr
-function getRandomQuestion(q) {
+// OBS behöver säkerställa att inte en fråga kommer fleras ggr
+function selectRandomQuestion(q) {
     const index = Math.floor(q.length * Math.random());
     console.log(q[index].question)
     return q[index];  //indexedQuestion
@@ -101,7 +112,7 @@ function showQuestionBlock(indexedQuestion) {
 
 function clickAnswer(selectedAnswer) {
     // const selectedAnswer = ;
-    if (selectedAnswer === )
+    // if (selectedAnswer === quizData.)
 }
 
 function createAnswerButtons(indexedQuestion) {
