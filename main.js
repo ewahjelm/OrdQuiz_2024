@@ -4,12 +4,13 @@ fetch json async
     welcome() : add elementBox. display text & startbutton
 
 startbutton, onclick:
-getRandomQuestion() -> quizDataquestion[i]
+getRandomQuestion() -> quizData.question[i]
 runQuiz() : starta timer på 10 sek
 
   showQuestionBlock():  remove elementBox (containing welcome-block)
                 add elementBox (question-block)
-                create pQuestion with data
+                create pQuestion with data from fetched quizData
+                create 4 buttons  - ta bort  o skapa igen . eller byt ut innehållet
 
 */
 const spaDiv = document.getElementById("root")
@@ -25,17 +26,18 @@ var quizData = [];
 
 //hämtar frågebank i bakgrunden från JSON-filen
 const getQuizBank = async () => {
-    const quizBank = await fetch(quizBankEndpoint);
-    if (quizBank.status !== 200) {
+    const quizBankPromise = await fetch(quizBankEndpoint);
+    if (quizBankPromise.status !== 200) {
         throw new Error("Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
     }
-    const data = await quizBank.json();
+    const data = await quizBankPromise.json();
     return data;
 };
 /* .then(response => response.json())
 
 .then(quizData => runQuiz(quizData)); */
 
+// vi hämtar all data i hela JSON objektet och sparar i quizData
 getQuizBank().then(data => quizData = data);
 welcome();
 
@@ -65,9 +67,9 @@ function welcome() {
     })
 }
 
-function clickStart() {
+/* function clickStart() {
 
-}
+} */
 
 function clearDiv() {
     console.log("elementBox1", elementBox1)
@@ -75,10 +77,11 @@ function clearDiv() {
     console.log("elementBox1 efter remove", elementBox1)
 }
 
+// OBS kommer att behöva säkerställa att inte en fråga kommer fleras ggr
 function getRandomQuestion(q) {
     const index = Math.floor(q.length * Math.random());
     console.log(q[index].question)
-    return q[index];
+    return q[index];  //indexedQuestion
 };
 
 
@@ -96,6 +99,11 @@ function showQuestionBlock(indexedQuestion) {
 
 }
 
+function clickAnswer(selectedAnswer) {
+    // const selectedAnswer = ;
+    if (selectedAnswer === )
+}
+
 function createAnswerButtons(indexedQuestion) {
     const answerButtons = [];
     for (let i = 0; i < indexedQuestion.options.length; i++) {
@@ -103,10 +111,11 @@ function createAnswerButtons(indexedQuestion) {
         button.className = "button"
         button.id = `answer${i}`;
         button.innerText = `${indexedQuestion.options[i]}`
+        button.addEventListener("click", clickAnswer(button.innerText));
         elementBox2.append(button);
-        // answerButtons.push(button);
+        answerButtons.push(button);
     }
-    console.log("create AB", answerButtons)
+    console.log("create answerButton", answerButtons)
 }
 
 
