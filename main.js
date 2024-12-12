@@ -28,6 +28,12 @@ const elementBox2 = document.createElement("div");
 elementBox1.classList = "question-block";
 elementBox2.classList = "question-block";
 
+const welcomeMessage = document.createElement("p");
+const startQuizButton = document.createElement("button");
+
+
+
+var quizData = [];
 // const quizBank = [];  //borde vara const!  ?????????????
 // selected
 
@@ -45,7 +51,7 @@ const getQuizBank = async () => {
 
 .then(quizBank => runQuiz(quizBank)); ---------------  */
 
-// vi hämtar all data i hela JSON objektet och sparar i quizData
+// all data från JSON-objektet sparas i quizData
 getQuizBank().then(quizDataPromise => quizData = quizDataPromise);  //promise from async solved
 
 
@@ -54,13 +60,13 @@ welcome();
 function welcome() {
     spaDiv.append(elementBox1);
 
-    const welcomeMessage = document.createElement("p");
+
     welcomeMessage.innerHTML = `Välkommen till mitt quiz <br> 
     som på ett lekfullt sätt testar dig <br>
     på kluriga svenska ord. <br><br>
     Tryck på knappen för att starta quizet. <br>
     Lycka till!`;
-    const startQuizButton = document.createElement("button");
+
     startQuizButton.className = "button"
     startQuizButton.innerText = "Start the quiz"
 
@@ -69,13 +75,7 @@ function welcome() {
 
     startQuizButton.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log("du har klickat")
-        // funkar
-
-        /*      // INTE  BRA . Funkar. MEN hur ska jag förhindra att det blir samma fråga två ggr.
-             const randomQuestion = selectRandomQuestion(quizBank);
-             showQuestionBlock(randomQuestion); //funkar 
-             // return ?; */
+        clickStart(quizData);
     })
 }
 
@@ -89,7 +89,7 @@ clearDiv();
 
 
 function clickStart(quizData) {
-    console.log("du har klickat")
+    console.log("du har klickat - clickStart kör", quizData)
     clearDiv(); // funkar
     // skapa setup för frågeblock
 
@@ -98,12 +98,14 @@ function clickStart(quizData) {
     createAnswerButtons();
     createNextButton()
 
-    // skapa frågeblocket med iteration över quizData-arrayen
-    for (let i = 0; i < 5; i++) {
-        button.innerText = `${indexedQuestion.options[i]}`
-
-    }
-    showQuestionBlock();
+    // skapa frågans innehåll med iteration över quizData-arrayen
+    pQuestionText.innerText = "ewa";
+    // knappvalen
+    /*     for (let i = 0; i < 5; i++) {
+            document.getElementById(`answer${i}`).innerText = quizData.options[i];
+        }
+     */
+    //  showQuestionBlock();
     spaDiv.append(elementBox2);
 }
 
@@ -113,11 +115,14 @@ function createAnswerButtons() {
     for (let i = 0; i < 4; i++) {
         const button = document.createElement("button");
         button.className = "button"
-        button.id = `answer${i}`;
-        button.addEventListener("click", clickAnswer(button.innerText));
+        button.id = `opt-${i}`;
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            //  clickAnswer();
+        });
         elementBox2.append(button);
     }
-    console.log("created answerButtons")
+    console.log("createAnswerButtons körd",)
 }
 
 function createNextButton() {
