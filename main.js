@@ -22,6 +22,7 @@ startbutton, onclick:
 */
 const spaDiv = document.getElementById("root")
 const quizBankEndpoint = "ordQuiz.json"
+
 const elementBox1 = document.createElement("div");
 const elementBox2 = document.createElement("div");
 
@@ -31,31 +32,74 @@ elementBox2.className = "question-block";
 const welcomeMessage = document.createElement("p");
 const startQuizButton = document.createElement("button");
 
+const questionParagraph = document.createElement("p");
 
-
+// BÖR nog inte vara globala
 var quizData = [];
+var questionArrayIndex = 0;
+
+/* 
+function checkDataType(data) {
+    if (data && typeof data.then === 'function') {
+        console.log('Det är ett Promise-objekt');
+    } else if (typeof data === 'object') {
+        console.log('Det är troligen JSON-data');
+    } else {
+        console.log('Det är varken ett Promise eller JSON');
+    }
+}
+
+ */
+
 // const quizBank = [];  //borde vara const! tilldelning krångligt ?????????????
 // selected
 
 //hämtar frågebank i bakgrunden från JSON-filen
-const getQuizBank = async () => {
+// ---------const getQuizBank = async () => {
+/* async function getQuizBank() {
     const quizBankPromise = await fetch(quizBankEndpoint);
+    //   checkDataType(quizBankPromise)
     if (quizBankPromise.status !== 200) {
         throw new Error("Kan inte hitta datan. Kolla att du har rätt endpoint i anropet.")
     }
     const quizBank = await quizBankPromise.json();
-    const quizDataPromise = await randomizeArray(quizBank);
-    return quizDataPromise;
+    checkDataType(quizBank)
+    console.log("efter parse", typeof quizBank)
+    return quizBank;
 };
 /* .then(response => response.json()) -----------
 
 .then(quizBank => runQuiz(quizBank)); ---------------  */
 
 // all data från JSON-objektet sparas i quizData
-getQuizBank().then(quizDataPromise => quizData = quizDataPromise);  //promise from async solved
+// getQuizBank() //promise from async solved in getQuizBank 
+
+// getQuizBank().then(quizBankPromise => quizData = quizBankPromise);  //promise from async solved
+
+
+fetch(quizBankEndpoint)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json(); //parsar json-filen till ett js-objekt
+    })
+    .then(data => {
+        console.log('Questions:', data); //frågorna från json-filen
+
+        quizData = randomizeArray(data);  // slumpar ordning
+        console.log('Random Questions:', data);
+
+        //  runQuiz(data.questions); //anropa en funktion för att rendera quizet
+    })
+    .catch(error => {
+        console.error('Failed to fetch the JSON file.', error);
+    });
+
 
 
 welcome();
+buildQuestionBlock();
 
 function welcome() {
     spaDiv.append(elementBox1);
@@ -71,45 +115,61 @@ function welcome() {
 
 
     elementBox1.append(welcomeMessage, startQuizButton);
-
-    startQuizButton.addEventListener("click", function (e) {
-        e.preventDefault();
-        clickStart();
-    })
+    console.log("quizData i welcome", quizData)
+    console.log("elementBox 1 i welcome", elementBox1)
+    startQuizButton.addEventListener("click", clickStart);
 }
 
-/**** function clickStart() {
-clearDiv();
-// ----------------selectRandomQuestion(quizBank) -> 
-    ---------------- lever vidare under frågeomgången som ? indexedQuestion eller randomQuestion !
---------------Ta bort frågan (objekt[index]) ur quizBank
 
-} *****/
+// ny setup - ett fråge-block
+function buildQuestionBlock() {
+    console.log("build Q block kör  quizData =", quizData)
+    elementBox2.append(questionParagraph);
+    createAnswerButtons();
+    createNextButton();
+}
+
+function clearDiv() {
+    console.log("i clearDiv - elementBox1 före remove", elementBox1)
+    elementBox1.remove();
+    console.log("elementBox1 efter remove", elementBox1)
+}
+
+
+function showQuestionBlock() {
+    clearDiv(); // funkar typ  
+    spaDiv.append(elementBox2);
+}
+
 
 
 function clickStart() {
+
     console.log("du har klickat - clickStart kör", quizData)
-    clearDiv(); // funkar
-    spaDiv.append(elementBox2);
-    // skapa setup för frågeblock
+
+    console.log("elementBox 2 i clickStart", elementBox2)
 
 
-    const pQuestionText = document.createElement("p");
-    elementBox2.append(pQuestionText);
+    // OBS - kanske inte funkar. clickstart ska generera första frågan . renderNewQ ska generera övriga?
 
-    createAnswerButtons();
-    createNextButton();
-
-    // skapa frågans innehåll med iteration över quizData-arrayen
-    pQuestionText.innerText = "ewa";
-    // knappvalen
-    /*     for (let i = 0; i < 5; i++) {
-            document.getElementById(`answer${i}`).innerText = quizData.options[i];
-        }
-     */
-    //  showQuestionBlock();
+    showQuestionBlock();
 }
 
+
+// skapa frågans innehåll från questionArrayIndex     ------  (med iteration över quizData-arrayen)
+
+function renderNewQuestion(questionArrayIndex) {
+    console.log("i render", quizData)
+    questionParagraph.innerText = quizData[questionArrayIndex].question;
+    // knappvalen
+    for (let i = 0; i < 5; i++) {
+        document.getElementById(`answer${i}`).innerText = quizData.options[i];
+    }
+}
+
+// function renderNewQuestion() {}
+
+// elementBox2.append(questionParagraph);
 
 
 function createAnswerButtons() {
@@ -119,7 +179,7 @@ function createAnswerButtons() {
         button.id = `opt-${i}`;
         button.addEventListener("click", function (e) {
             e.preventDefault();
-            //  clickAnswer();
+            clickAnswer(button.id);
         });
         elementBox2.append(button);
     }
@@ -131,6 +191,9 @@ function createNextButton() {
     nextButton.id = "next-button"
     nextButton.className = "button"
     nextButton.innerText = "Nästa fråga"
+    nextButton.addEventListener("click", function (e) {
+        e.preventDefault();
+    })
     elementBox2.append(nextButton)
 }
 
@@ -143,19 +206,16 @@ function randomizeArray(array) {
     }
 }
 
-function clearDiv() {
-    console.log("elementBox1", elementBox1)
-    elementBox1.remove();
-    console.log("elementBox1 efter remove", elementBox1)
-}
 
-
-function clickAnswer(selectedAnswer) {
-    // const selectedAnswer = ;
+/* 
+function clickAnswer(buttonID) {
+    const selectedButton = getElementById(buttonID);
+    const selectedAnswer = selectedButton.innerText;
+    const correctAnswer = quizData.answer[questionArrayIndex]
     // if (selectedAnswer === quizData.answer)
 }
 
-
+ */
 
 
 
