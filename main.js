@@ -25,8 +25,8 @@ const quizBankEndpoint = "ordQuiz.json"
 const elementBox1 = document.createElement("div");
 const elementBox2 = document.createElement("div");
 
-elementBox1.classList = "question-block";
-elementBox2.classList = "question-block";
+elementBox1.className = "question-block";
+elementBox2.className = "question-block";
 
 const welcomeMessage = document.createElement("p");
 const startQuizButton = document.createElement("button");
@@ -34,7 +34,7 @@ const startQuizButton = document.createElement("button");
 
 
 var quizData = [];
-// const quizBank = [];  //borde vara const!  ?????????????
+// const quizBank = [];  //borde vara const! tilldelning krångligt ?????????????
 // selected
 
 //hämtar frågebank i bakgrunden från JSON-filen
@@ -60,7 +60,6 @@ welcome();
 function welcome() {
     spaDiv.append(elementBox1);
 
-
     welcomeMessage.innerHTML = `Välkommen till mitt quiz <br> 
     som på ett lekfullt sätt testar dig <br>
     på kluriga svenska ord. <br><br>
@@ -75,7 +74,7 @@ function welcome() {
 
     startQuizButton.addEventListener("click", function (e) {
         e.preventDefault();
-        clickStart(quizData);
+        clickStart();
     })
 }
 
@@ -88,15 +87,18 @@ clearDiv();
 } *****/
 
 
-function clickStart(quizData) {
+function clickStart() {
     console.log("du har klickat - clickStart kör", quizData)
     clearDiv(); // funkar
+    spaDiv.append(elementBox2);
     // skapa setup för frågeblock
 
 
     const pQuestionText = document.createElement("p");
+    elementBox2.append(pQuestionText);
+
     createAnswerButtons();
-    createNextButton()
+    createNextButton();
 
     // skapa frågans innehåll med iteration över quizData-arrayen
     pQuestionText.innerText = "ewa";
@@ -106,7 +108,6 @@ function clickStart(quizData) {
         }
      */
     //  showQuestionBlock();
-    spaDiv.append(elementBox2);
 }
 
 
@@ -127,10 +128,11 @@ function createAnswerButtons() {
 
 function createNextButton() {
     const nextButton = document.createElement("button");
+    nextButton.id = "next-button"
+    nextButton.className = "button"
     nextButton.innerText = "Nästa fråga"
     elementBox2.append(nextButton)
 }
-
 
 
 // Fisher-Yates shuffle metod
