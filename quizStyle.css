@@ -60,4 +60,10 @@ button {
     display: block;
 }
 
-.element-box button {}
+.feedback {
+    background-color: antiquewhite;
+}
+
+.element-box button {
+    margin-bottom: 10px;
+}

@@ -79,7 +79,7 @@ fetch(quizBankEndpoint)
         console.log('Random Questions:', quizData);
 
         //  runQuiz(data.questions); //anropa en funktion för att rendera quizet
-        addEventListener();
+        addListenerToStartButton();
     })
     .catch(error => {
         console.error('Failed to fetch the JSON file.', error);
@@ -115,10 +115,13 @@ function welcome() {
 function clickStart() {
     console.log("start klick - QuizData:", quizData)
     clearDiv()
+    // Bygger html struktur för quiz-block i elementBox :  <p>, 4 val-<button> och 1 nästa-<button> 
     buildQuestionBlock();
     // spaDiv.append(elementBox)
+
     renderNewQuestion();
-    showQuestionBlock()
+    addEventListenerToOptionButtons();
+    // showQuestionBlock()
     // 
     //  console.log("elementBox 2 i clickStart", elementBox)   
 }
@@ -130,16 +133,29 @@ function buildQuestionBlock() {
     elementBox.append(questionParagraph);
     createAnswerButtons();
     createNextButton();
+    //  createFeedback();
 }
 
 //från början
 
-function addEventListener() {
+function addListenerToStartButton() {
     console.log("datat hämtat")
     // lägg till listener efter att data hämtats men innan rendering")
     startQuizButton.addEventListener("click", clickStart);
 }
 
+function addEventListenerToOptionButtons() {
+
+    for (let i = 0; i < 4; i++) {
+        // OBS Här under var det fel - Alternativen funkar nu
+        const svarsknapp = document.getElementById(`opt-${i}`);
+        svarsknapp.addEventListener("click", function (event) {
+            event.preventDefault();
+            clickAnswer(event.target);
+        });
+
+    }
+}
 
 
 
@@ -150,40 +166,34 @@ function addEventListener() {
 function clearDiv() {
     elementBox.innerHTML = '';
 }
-/* function clearDiv1() {
-    console.log("i clearDiv - elementBox1 före remove", elementBox1)
-    elementBox1.remove();
-    console.log("elementBox1 efter remove", elementBox1)
-}
- */
+
 
 function showQuestionBlock() {
     spaDiv.append(elementBox);
 }
 
-// skapa frågans innehåll från questionArrayIndex     ------  (med iteration över quizData-arrayen)
+// skapa frågans innehåll utifrån questionArrayIndex     ------  (med iteration över quizData-arrayen)
 
 function renderNewQuestion() {
-    console.log("Rendering new question QuixData =", quizData);
-    questionParagraph.value = quizData[questionArrayIndex].question;
+    // console.log("Kör renderNewQuestion   BOX =", elementBox);
+    // console.log("fråga nr :", questionArrayIndex)
+    // console.log("fråga ", quizData[questionArrayIndex].question)
+    // renderar fråga till <p> utifrån questionArrayIndex
+    questionParagraph.innerText = quizData[questionArrayIndex].question;
     console.log("questionParagraph", questionParagraph)
 
-    // Update answer buttons based on options (modify this based on your data structure)
-    for (let i = 0; i < 5; i++) {
-        document.getElementById(`answer${i}`).innerText = "quizData[questionArrayIndex].options[i]";
+    // svarsalternativen renderas
+    for (let i = 0; i < 4; i++) {
+        // OBS Här under var det fel - Alternativen funkar nu
+        const svarsknapp = document.getElementById(`opt-${i}`);
+        svarsknapp.innerText = quizData[questionArrayIndex].options[i];
+
     }
+
 }
 
-// function renderNewQuestion(questionArrayIndex) {
-//     console.log("i render", quizData)
-//     questionParagraph.innerText = quizData[questionArrayIndex].question;
-//     // knappvalen
-//     for (let i = 0; i < 5; i++) {
-//         document.getElementById(`answer${i}`).innerText = quizData.options[i];
-//     }
-// }
 
-// function renderNewQuestion() {}
+
 
 // elementBox2.append(questionParagraph);
 
@@ -193,10 +203,6 @@ function createAnswerButtons() {
         const button = document.createElement("button");
         button.className = "button"
         button.id = `opt-${i}`;
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            clickAnswer(button.id);
-        });
         elementBox.append(button);
     }
     console.log("createAnswerButtons körd",)
@@ -209,22 +215,33 @@ function createNextButton() {
     nextButton.innerText = "Nästa fråga"
     nextButton.addEventListener("click", function (e) {
         e.preventDefault();
+        questionArrayIndex = questionArrayIndex + 1;
+        renderNewQuestion();
+
     })
     elementBox.append(nextButton)
 }
 
-
-
-
-/*
-function clickAnswer(buttonID) {
-    const selectedButton = getElementById(buttonID);
-    const selectedAnswer = selectedButton.innerText;
-    const correctAnswer = quizData.answer[questionArrayIndex]
-    // if (selectedAnswer === quizData.answer)
+function createNFeedback() {
+    const feedbackField = document.createElement("div");
+    feedbackField.id = "feedbackField"
+    feedbackField.className = "feedback"
 }
 
- */
+function clickAnswer(svarsknapp) {
+    //  const selectedButton = getElementById(buttonID);
+    const selectedAnswer = svarsknapp.innerText;
+    console.log("Valt svar = ", selectedAnswer)
+    const correctAnswer = quizData[questionArrayIndex].answer
+    console.log("Rätt svar = ", correctAnswer)
+    if (selectedAnswer === correctAnswer) {
+
+        console.log("Rätt!")
+        // return questionArrayIndex;
+    } else (console.log("Fel!"))
+}
+
+
 
 
 
