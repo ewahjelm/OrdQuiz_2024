@@ -16,15 +16,39 @@ body {
 }
 
 p {
-    color: rgb(177, 233, 198);
+    color: rgb(6, 6, 6);
     font-size: 20pt;
+}
+
+button {
+    max-width: 800px;
+}
+
+
+#feedback-field {
+    width: 400px;
+    font-size: 18pt;
+    height: 60px;
+    background-color: beige;
+    border: 2pt black solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #root {
     background-color: rgb(190, 22, 22);
 }
 
-.question-block {
+#next-button {
+    background-color: rgb(168, 207, 160);
+    margin-top: 10px;
+    ;
+}
+
+.element-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: rgb(204, 160, 204);
     padding: 10%;
 }
@@ -34,6 +58,7 @@ p {
     background-color: rgb(187, 176, 187);
     font-size: 18pt;
     padding: 2%;
+
     /* margin-bottom: 5%; */
 }
 
@@ -41,4 +66,26 @@ p {
     background-color: #F1F1F1;
     text-align: center;
     padding: 20px;
+}
+
+.hidden {
+    display: none;
+
+}
+
+.visible {
+    display: block;
+}
+
+.feedback {
+    background-color: antiquewhite;
+}
+
+.element-box button {
+    margin-bottom: 10px;
+}
+
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
