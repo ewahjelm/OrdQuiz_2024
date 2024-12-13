@@ -7,8 +7,7 @@
             "Despotisk",
             "Eftertänksam"
         ],
-        "answer": "Inskränkt",
-        "trivia": ""
+        "answer": "Inskränkt"
     },
     {
         "question": "Vilket av följande ord är en synonym till ordet 'despotisk'?",
@@ -18,10 +17,9 @@
             "Inskränkt",
             "Enväldig"
         ],
-        "answer": "Enväldig",
-        "trivia": ""
+        "answer": "Enväldig"
     },
-    { 
+    {
         "question": "Att med humor och eftertanke ändra innehållet i en känd fras, titel eller dylikt kallas för en..",
         "options": [
             "Satir",
@@ -29,8 +27,7 @@
             "Travesti",
             "Parodi"
         ],
-        "answer": "Travesti",
-        "trivia": ""
+        "answer": "Travesti"
     },
     {
         "question": "Xenofobi har en person som är rädd för?",
@@ -40,8 +37,7 @@
             "Främlingar",
             "Solljus"
         ],
-        "answer": "Främlingar",
-        "trivia": ""
+        "answer": "Främlingar"
     },
     {
         "question": "Akrofobi är en fobi för vad då?",
@@ -51,7 +47,156 @@
             "Höjdskräck",
             "Vattenskräck"
         ],
-        "answer": "Höjdskräck",
-        "trivia": ""
+        "answer": "Höjdskräck"
+    },
+    {
+        "question": "Hur är någon som är nyckfull?",
+        "options": [
+            "Salongsberusad",
+            "Intelligent",
+            "Oberäknelig",
+            "Högfärdig"
+        ],
+        "answer": "Oberäknelig"
+    },
+    {
+        "question": "Vad gör någon eller något som gumpar?",
+        "options": [
+            "Idrottar",
+            "Hoppar",
+            "Exploderar",
+            "Skumpar"
+        ],
+        "answer": "Skumpar"
+    },
+    {
+        "question": "Vad är myopi en synonym till?",
+        "options": [
+            "Närsynthet",
+            "Dagdröm",
+            "Egoism",
+            "Testamente"
+        ],
+        "answer": "Närsynthet"
+    },
+    {
+        "question": "Vad innebär rykt?",
+        "options": [
+            "Vård",
+            "Skvaller",
+            "Eko",
+            "Avundsjuka"
+        ],
+        "answer": "Vård"
+    },
+    {
+        "question": "Äggört kallas även...?",
+        "options": [
+            "Björnloka",
+            "Oregano",
+            "Aubergine",
+            "Zucchini"
+        ],
+        "answer": "Aubergine"
+    },
+    {
+        "question": "Vad är en dust?",
+        "options": [
+            "En dammvippa",
+            "En strid",
+            "En suck",
+            "En protest"
+        ],
+        "answer": "En strid"
+    },
+    {
+        "question": "Vad är någon som är opasslig?",
+        "options": [
+            "Statslös",
+            "Sen",
+            "Hopplös",
+            "Krasslig"
+        ],
+        "answer": "Krasslig"
+    },
+    {
+        "question": "Vad innebär det att inhösta?",
+        "options": [
+            "Vissna",
+            "Betona",
+            "Inkassera",
+            "Skörda"
+        ],
+        "answer": "Inkassera"
+    },
+    {
+        "question": "Vad betyder fissil?",
+        "options": [
+            "Klyvbar",
+            "Unken",
+            "Manipulativ",
+            "Explosiv"
+        ],
+        "answer": "Klyvbar"
+    },
+    {
+        "question": "Vad är en antagonist?",
+        "options": [
+            "Motståndare",
+            "Hjälte",
+            "Berättare",
+            "Medhjälpare"
+        ],
+        "answer": "Motståndare"
+    },
+    {
+        "question": "Vad innebär det att vara ambivalent?",
+        "options": [
+            "Kluven",
+            "Bestämd",
+            "Glad",
+            "Vresig"
+        ],
+        "answer": "Kluven"
+    },
+    {
+        "question": "Vad syftar ordet paradox på?",
+        "options": [
+            "Självmotsägelse",
+            "Enkel lösning",
+            "Tvetydighet",
+            "Mönster"
+        ],
+        "answer": "Självmotsägelse"
+    },
+    {
+        "question": "Vad innebär begreppet melankoli?",
+        "options": [
+            "Sorgsenhet",
+            "Upprymdhet",
+            "Ilska",
+            "Rädsla"
+        ],
+        "answer": "Sorgsenhet"
+    },
+    {
+        "question": "Vad är något som är perifert?",
+        "options": [
+            "I utkanten",
+            "Centralt",
+            "Grundläggande",
+            "Komplext"
+        ],
+        "answer": "I utkanten"
+    },
+    {
+        "question": "Vad menas med en epok?",
+        "options": [
+            "Tidsperiod",
+            "Berättelse",
+            "Avskrift",
+            "Upprepning"
+        ],
+        "answer": "Tidsperiod"
     }
 ]

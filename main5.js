@@ -64,14 +64,14 @@ function welcome() {
     spaDiv.append(elementBox); // Append after content is added
 }
 
-function buildQuestionBlock() {
+function buildAndAppendQuestionBlockHTML() {
     quizBox.className = "element-box";
     quizBox.append(questionParagraph);
-    createAnswerButtons();
+    createOptionButtons();
     createNextButton();
 }
 
-function createAnswerButtons() {
+function createOptionButtons() {
     // ... your code to create answer buttons ...
 }
 
@@ -87,5 +87,5 @@ fetchAndShuffleQuizData() // Fetch quiz data in background
     .then(quizData => {
         // Quiz data is ready, attach click event listener
         startQuizButton.addEventListener("click", () => clickStart(quizData));
-        buildQuestionBlock(); // Prepare quiz block structure
+        buildAndAppendQuestionBlockHTML(); // Prepare quiz block structure
     });

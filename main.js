@@ -34,10 +34,13 @@ elementBox.className = "element-box";
 const welcomeMessage = document.createElement("p");
 const startQuizButton = document.createElement("button");
 const questionParagraph = document.createElement("p");
+const feedbackField = document.createElement("div");
+const reStartButton = document.createElement("button");
 
 // BÖR nog inte vara globala - gemini säger ok
 var quizData = [];
 var questionArrayIndex = 0;
+var points = 0;
 
 
 
@@ -70,13 +73,10 @@ fetch(quizBankEndpoint)
         // gör en kopia på hämtad array
         quizData = [...data];
 
-        console.log('original Questions:', quizData); //frågorna från json-filen
-        // checkDataType(data);
 
         // Fisher-Yates shuffle metod
         randomizeArray(quizData);  // slumpar ordning - fungerar
 
-        console.log('Random Questions:', quizData);
 
         //  runQuiz(data.questions); //anropa en funktion för att rendera quizet
         addListenerToStartButton();
@@ -115,8 +115,9 @@ function welcome() {
 function clickStart() {
     console.log("start klick - QuizData:", quizData)
     clearDiv()
+    questionArrayIndex = 0;
     // Bygger html struktur för quiz-block i elementBox :  <p>, 4 val-<button> och 1 nästa-<button> 
-    buildQuestionBlock();
+    buildAndAppendQuestionBlockHTML();
     // spaDiv.append(elementBox)
 
     renderNewQuestion();
@@ -127,13 +128,13 @@ function clickStart() {
 }
 
 // ny setup - ett fråge-block
-function buildQuestionBlock() {
+function buildAndAppendQuestionBlockHTML() {
     console.log("build Q block kör  quizData =", quizData)
     // lägger till <p>
     elementBox.append(questionParagraph);
-    createAnswerButtons();
+    createOptionButtons();
+    createFeedback();
     createNextButton();
-    //  createFeedback();
 }
 
 //från början
@@ -175,6 +176,8 @@ function showQuestionBlock() {
 // skapa frågans innehåll utifrån questionArrayIndex     ------  (med iteration över quizData-arrayen)
 
 function renderNewQuestion() {
+    feedbackField.innerHTML = "";
+
     // console.log("Kör renderNewQuestion   BOX =", elementBox);
     // console.log("fråga nr :", questionArrayIndex)
     // console.log("fråga ", quizData[questionArrayIndex].question)
@@ -187,7 +190,7 @@ function renderNewQuestion() {
         // OBS Här under var det fel - Alternativen funkar nu
         const svarsknapp = document.getElementById(`opt-${i}`);
         svarsknapp.innerText = quizData[questionArrayIndex].options[i];
-
+        svarsknapp.disabled = false;
     }
 
 }
@@ -198,15 +201,25 @@ function renderNewQuestion() {
 // elementBox2.append(questionParagraph);
 
 
-function createAnswerButtons() {
+function createOptionButtons() {
     for (let i = 0; i < 4; i++) {
         const button = document.createElement("button");
-        button.className = "button"
+        button.classList = "button options"
         button.id = `opt-${i}`;
         elementBox.append(button);
     }
     console.log("createAnswerButtons körd",)
 }
+
+function createFeedback() {
+    console.log("creating FeedbackField");
+    feedbackField.id = "feedback-field";
+    feedbackField.classList = "feedback";
+    feedbackField.innerText = "";
+    elementBox.append(feedbackField);
+}
+
+
 
 function createNextButton() {
     const nextButton = document.createElement("button");
@@ -215,18 +228,12 @@ function createNextButton() {
     nextButton.innerText = "Nästa fråga"
     nextButton.addEventListener("click", function (e) {
         e.preventDefault();
-        questionArrayIndex = questionArrayIndex + 1;
+        questionArrayIndex++;
         renderNewQuestion();
-
     })
     elementBox.append(nextButton)
 }
 
-function createNFeedback() {
-    const feedbackField = document.createElement("div");
-    feedbackField.id = "feedbackField"
-    feedbackField.className = "feedback"
-}
 
 function clickAnswer(svarsknapp) {
     //  const selectedButton = getElementById(buttonID);
@@ -234,65 +241,54 @@ function clickAnswer(svarsknapp) {
     console.log("Valt svar = ", selectedAnswer)
     const correctAnswer = quizData[questionArrayIndex].answer
     console.log("Rätt svar = ", correctAnswer)
-    if (selectedAnswer === correctAnswer) {
+    giveFeedBack(selectedAnswer == correctAnswer);
+    console.log(questionArrayIndex, "index")
+    if (questionArrayIndex >= 7) {
+        disableOptions();
+        endQuiz();
+    }
+}
+
+function giveFeedBack(wasCorrect) {
+    if (wasCorrect) {
 
         console.log("Rätt!")
-        // return questionArrayIndex;
-    } else (console.log("Fel!"))
+        points++;
+        feedbackField.innerHTML = `Rätt!
+        Du har nu ${points} poäng av 8`;
+
+    } else {
+        (console.log("Fel!"))
+        feedbackField.innerHTML = `Fel, tyvärr.<br>
+        Du har nu ${points} poäng av 8`;
+    }
+    disableOptions();
+
 }
 
 
 
+function disableOptions() {
+    const optionButtons = document.getElementsByClassName("options");
+    for (let i = 0; i < optionButtons.length; i++) {
+        optionButtons[i].disabled = true;
+    }
+}
 
+function endQuiz() {
+    clearDiv();
+    // ny setup - ett fråge-block
 
+    console.log("quiz klart")
 
+    reStartButton.className = "button"
+    reStartButton.innerText = "Restart the quiz"
 
+    elementBox.append(questionParagraph, reStartButton);
+    // lägger till <p>
+    questionParagraph.innerHTML = `Nu är quizet slut. <br> Du fick ${points} poäng av 8 möjliga. <br> Vill du ta testet igen?`
 
+    reStartButton.addEventListener("click", clickStart)
 
-// /* /*
+}
 
-// // OBS behöver säkerställa att inte en fråga kommer fleras ggr
-// function selectRandomQuestion1(q) {
-//     const index = Math.floor(q.length * Math.random());
-//     console.log(q[index].question)
-//     return q[index];  //indexedQuestion
-// };
-// /*  */
-//  */
-// function showQuestionBlock1(indexedQuestion) {
-//     spaDiv.append(elementBox2);
-
-//     const pQuestionText = document.createElement("p");
-//     pQuestionText.innerText = indexedQuestion.question;
-//     elementBox2.append(pQuestionText);
-
-//     console.log("showQuestionBlock", indexedQuestion);
-
-//     // questionText = runQuiz(quizData);
-//     createAnswerButtons(indexedQuestion);
-
-// }
-
-
-// function createAnswerButtons1(indexedQuestion) {
-//     const answerButtons = [];
-//     for (let i = 0; i < indexedQuestion.options.length; i++) {
-//         const button = document.createElement("button");
-//         button.className = "button"
-//         button.id = `answer${i}`;
-//         button.innerText = `${indexedQuestion.options[i]}`
-//         button.addEventListener("click", clickAnswer(button.innerText));
-//         elementBox2.append(button);
-//         answerButtons.push(button);
-//     }
-//     console.log("create answerButton", answerButtons)
-// }
-
-
-
-
-
-
-
-
-//  */

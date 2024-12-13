@@ -16,7 +16,7 @@ body {
 }
 
 p {
-    color: rgb(177, 233, 198);
+    color: rgb(6, 6, 6);
     font-size: 20pt;
 }
 
@@ -24,8 +24,25 @@ button {
     max-width: 800px;
 }
 
+
+#feedback-field {
+    width: 400px;
+    font-size: 18pt;
+    height: 60px;
+    background-color: beige;
+    border: 2pt black solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 #root {
     background-color: rgb(190, 22, 22);
+}
+
+#next-button {
+    background-color: rgb(168, 207, 160);
+    margin-top: 10px;
+    ;
 }
 
 .element-box {
@@ -66,4 +83,9 @@ button {
 
 .element-box button {
     margin-bottom: 10px;
+}
+
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
