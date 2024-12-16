@@ -24,16 +24,30 @@ button {
     max-width: 800px;
 }
 
-
 #feedback-field {
     width: 400px;
     font-size: 18pt;
     height: 60px;
     background-color: beige;
-    border: 2pt black solid;
+    border: thin black solid;
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+#interval-timer {
+    display: flex;
+    min-height: 25px;
+    height: auto;
+    text-align: center;
+    background-color: rgb(204, 160, 204);
+    font-size: 20pt;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: rgb(112, 3, 85);
+    /*  width: 100%;  */
+
+}
+
+
 
 #root {
     background-color: rgb(190, 22, 22);

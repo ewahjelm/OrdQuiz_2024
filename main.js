@@ -1,28 +1,3 @@
-/* Vad ska köras hur?:
-onload
-getQuizBank() fetch json async -> sparar data i arrayen quizBank (som blir samma varje gång)
-OBS att data bara borde tilldelas här 1 gång men const funkar inte
-
-Blanda ordningen på frågorna med Fisher Yates och spara till 
-en array med omgångens fråge-objekt - quizData
-    welcome() : add elementBox. display text & startbutton
-
-
-
-startbutton, onclick:
-  //ÄNDRA getRandomQuestion() -> quizBank.question[i] -------------
-  -->  iterera istället genom quizData
-    runQuiz() : starta timer på 10 sek
-    clearDiv() remove elementBox (containing welcome-block)
-    showQuestionBlock():  
-                add elementBox (question-block)
-                create pQuestion with data from quizData
-                create 4 buttons  - ta bort  o skapa igen . eller byt ut innehållet
-
-*/
-
-
-
 
 
 const spaDiv = document.getElementById("root")
@@ -36,15 +11,17 @@ const startQuizButton = document.createElement("button");
 const questionParagraph = document.createElement("p");
 const feedbackField = document.createElement("div");
 const reStartButton = document.createElement("button");
+const countDownVisual = document.createElement("div");
 
-// BÖR nog inte vara globala - gemini säger ok
+
 var quizData = [];
 var questionArrayIndex = 0;
 var points = 0;
 
+var questionAnswered = false;
 
 
-// Fisher-Yates shuffle metod
+// Fisher-Yates shuffle metod blandar ordningen på frågorna
 function randomizeArray(array) {
     const randomizedArray = array;
     for (let i = array.length - 1; i > 0; i--) {
@@ -60,7 +37,7 @@ function randomizeArray(array) {
 // getQuizBank() //promise from async solved in getQuizBank 
 
 // getQuizBank().then(quizBankPromise => quizData = quizBankPromise);  //promise from async solved
-//  #############     START   asyncron  #######################
+//  #############     START   asyncront  hämtar och omvandlar data från API medan html-strukturen byggs  #######################
 
 fetch(quizBankEndpoint)
     .then(response => {
@@ -79,17 +56,16 @@ fetch(quizBankEndpoint)
 
 
         //  runQuiz(data.questions); //anropa en funktion för att rendera quizet
-        addListenerToStartButton();
+        addEventListenerToStartButton();
     })
     .catch(error => {
         console.error('Failed to fetch the JSON file.', error);
     });
 
 
+//  #############     START asyncront  html-strukturen byggs medan data hämtas och omvandlas från API ovan   #######################
 
 welcome();
-
-
 
 
 function welcome() {
@@ -97,7 +73,7 @@ function welcome() {
 
     welcomeMessage.innerHTML = `Välkommen till mitt quiz <br> 
     som på ett lekfullt sätt testar dig <br>
-    på kluriga svenska ord. <br><br>
+    på 8 kluriga svenska ord. <br><br>
     Tryck på knappen för att starta quizet. <br>
     Lycka till!`;
 
@@ -106,61 +82,106 @@ function welcome() {
 
 
     elementBox.append(welcomeMessage, startQuizButton);
-    // OBS EJ HÄR
-    // startQuizButton.addEventListener("click", clickStart);
+
 }
 
-//  ######     EFTER KLICK  ###############
+
+//  ###########     EFTER KLICK       ###############
 
 function clickStart() {
-    console.log("start klick - QuizData:", quizData)
-    clearDiv()
-    questionArrayIndex = 0;
-    // Bygger html struktur för quiz-block i elementBox :  <p>, 4 val-<button> och 1 nästa-<button> 
-    buildAndAppendQuestionBlockHTML();
-    // spaDiv.append(elementBox)
+    //  console.log("start klick - QuizData:", quizData)  // ny ordning efter restart
+    clearDiv()  // börja från tom container
 
+    // Bygger html struktur för quiz-block i elementBox : timer, <p>, 4 val-<button> och 1 nästa-<button> 
+    buildAndAppendQuestionBlockHTML();
+
+    // lägg till eventlyssnare efter att knappen skapats men före första frågan renderas
+    // (vid restart gör vi clearDiv)
+    addEventListenersToOptionButtons();
+
+    //visar första frågan . Körs från questionArrayIndex = 0 satt och deklarerat högst upp i main.js
     renderNewQuestion();
-    addEventListenerToOptionButtons();
-    // showQuestionBlock()
-    // 
-    //  console.log("elementBox 2 i clickStart", elementBox)   
+
 }
 
-// ny setup - ett fråge-block
+// ny setup/HTML-struktur - ett fråge-block
 function buildAndAppendQuestionBlockHTML() {
-    console.log("build Q block kör  quizData =", quizData)
-    // lägger till <p>
-    elementBox.append(questionParagraph);
-    createOptionButtons();
-    createFeedback();
-    createNextButton();
+    console.log("Bygger fråge-blocket")
+
+    countDownSetup(); // lägger till timer
+
+    elementBox.append(questionParagraph); // lägger till <p>
+
+    createAndAppendOptionButtons(); // 4 knappar för svarsalternativ skapas
+    createAndAppendFeedbackField();
+    createAndAppendNextButton();
+
 }
 
 //från början
 
-function addListenerToStartButton() {
+function addEventListenerToStartButton() {
     console.log("datat hämtat")
     // lägg till listener efter att data hämtats men innan rendering")
     startQuizButton.addEventListener("click", clickStart);
 }
 
-function addEventListenerToOptionButtons() {
-
+/* function addEventListenersToOptionButtons() {
     for (let i = 0; i < 4; i++) {
-        // OBS Här under var det fel - Alternativen funkar nu
-        const svarsknapp = document.getElementById(`opt-${i}`);
-        svarsknapp.addEventListener("click", function (event) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", function (event) {
             event.preventDefault();
-            clickAnswer(event.target);
+            const choice = event.target;
+            console.log("valt alternativ ! ", choice)
+            questionAnswered = true;
+            validateOptionClick(choice);
         });
+    }
+}
+    */
 
+
+// OBS att det behövs en anonym funktion för att hantera data utan att köra funktionen selectingAnswer direkt
+/* function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", selectingAnswer(chosenButton));
     }
 }
 
+function selectingAnswer(chosenButton) {
+    questionAnswered = true;
+    compareOptionToAnswer(chosenButton);
+}
 
+OBS Här har jag bakat ihop dessa två funktioner i den anonyma nedan ->
+*/
+/* 
+function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", function (event) {
+            questionAnswered = true;
+            // OBS HITTADE FELET NEDAN
+            runCountDown();
+            const clickedButton = event.target;
+            compareOptionToAnswer(clickedButton);
+        });
+    }
+} */
 
-
+function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", function (event) {
+            questionAnswered = true;
+            // OBS HITTADE FELET NEDAN
+            //  runCountDown();
+            const clickedButton = event.target;
+            compareOptionToAnswer(clickedButton);
+        });
+    }
+}
 
 
 
@@ -168,22 +189,24 @@ function clearDiv() {
     elementBox.innerHTML = '';
 }
 
-
 function showQuestionBlock() {
     spaDiv.append(elementBox);
 }
 
-// skapa frågans innehåll utifrån questionArrayIndex     ------  (med iteration över quizData-arrayen)
 
+/* skapar varje frågas innehåll utifrån questionArrayIndex   
+Kallas 1 gång av clickStart när Quizet börjar
+
+Kallas också när användaren klickat på ett svarsalternativ (något option):
+via compareOptionToAnswer för att starta nästa fråga.
+se addEventListenersToOptionButtons -> (anonymfunktion lagrar vilken knapp)
+*/
 function renderNewQuestion() {
-    feedbackField.innerHTML = "";
-
-    // console.log("Kör renderNewQuestion   BOX =", elementBox);
-    // console.log("fråga nr :", questionArrayIndex)
-    // console.log("fråga ", quizData[questionArrayIndex].question)
+    feedbackField.innerText = "";
+    questionAnswered = false;
     // renderar fråga till <p> utifrån questionArrayIndex
     questionParagraph.innerText = quizData[questionArrayIndex].question;
-    console.log("questionParagraph", questionParagraph)
+    // console.log("questionParagraph", questionParagraph)
 
     // svarsalternativen renderas
     for (let i = 0; i < 4; i++) {
@@ -192,16 +215,13 @@ function renderNewQuestion() {
         svarsknapp.innerText = quizData[questionArrayIndex].options[i];
         svarsknapp.disabled = false;
     }
-
+    runCountDown();
 }
 
 
 
 
-// elementBox2.append(questionParagraph);
-
-
-function createOptionButtons() {
+function createAndAppendOptionButtons() {
     for (let i = 0; i < 4; i++) {
         const button = document.createElement("button");
         button.classList = "button options"
@@ -211,7 +231,7 @@ function createOptionButtons() {
     console.log("createAnswerButtons körd",)
 }
 
-function createFeedback() {
+function createAndAppendFeedbackField() {
     console.log("creating FeedbackField");
     feedbackField.id = "feedback-field";
     feedbackField.classList = "feedback";
@@ -219,53 +239,72 @@ function createFeedback() {
     elementBox.append(feedbackField);
 }
 
-
-
-function createNextButton() {
+function createAndAppendNextButton() {
     const nextButton = document.createElement("button");
     nextButton.id = "next-button"
     nextButton.className = "button"
     nextButton.innerText = "Nästa fråga"
-    nextButton.addEventListener("click", function (e) {
-        e.preventDefault();
-        questionArrayIndex++;
-        renderNewQuestion();
-    })
+    // När knappen trycks kollas om något alternativ valts
+    nextButton.addEventListener("click", validateAnOptionIsClicked)
     elementBox.append(nextButton)
 }
 
 
-function clickAnswer(svarsknapp) {
-    //  const selectedButton = getElementById(buttonID);
-    const selectedAnswer = svarsknapp.innerText;
-    console.log("Valt svar = ", selectedAnswer)
+
+
+/*Körs efter att användaren klickat på något av svarsalternativen:
+Se anonym funktion i addEventListenersToOptionButtons som skickar valet vidare */
+function compareOptionToAnswer(choice) {
+    console.log("Jämför dirr svar med rätt svar")
+    const selectedAnswer = choice.innerText;
+    // console.log("Valt svar = ", selectedAnswer)
     const correctAnswer = quizData[questionArrayIndex].answer
-    console.log("Rätt svar = ", correctAnswer)
+    // console.log("Rätt svar = ", correctAnswer)
+
+    // ge feedback för rätt resp fel svar
     giveFeedBack(selectedAnswer == correctAnswer);
-    console.log(questionArrayIndex, "index")
+    console.log(questionArrayIndex, "fråga index")
+    console.log("OBS kontroll av questionanswer: ", questionAnswered)
+
+    //   OBS  clearInterval blockscopad
+
+
+    // efter 8 frågor är quizet slut
     if (questionArrayIndex >= 7) {
         disableOptions();
         endQuiz();
+    } else {
+        // efter rättning körs nästa fråga
+        questionArrayIndex++;
+        enableOptions();
+        renderNewQuestion();
     }
 }
 
 function giveFeedBack(wasCorrect) {
     if (wasCorrect) {
-
-        console.log("Rätt!")
+        console.log("giveFeedBack säger: Rätt!")
         points++;
-        feedbackField.innerHTML = `Rätt!
+        feedbackField.innerText = `Rätt!
         Du har nu ${points} poäng av 8`;
 
     } else {
-        (console.log("Fel!"))
-        feedbackField.innerHTML = `Fel, tyvärr.<br>
+        (console.log("giveFeedBack säger: Fel!"))
+        feedbackField.innerText = `Fel, tyvärr.
         Du har nu ${points} poäng av 8`;
     }
-    disableOptions();
-
 }
 
+// Körs på klick från "Nästa fråga-knappen" om man inte valt något alternativ
+// OBS eller att tiden gått ut!!
+function validateAnOptionIsClicked() {
+    console.log("validerar att du valt en knapp")
+    //eftersom man inte behöver tryckapå nästa
+    if (questionAnswered != true) {
+        console.log("du har inte tryckt på något alternativ")
+        feedbackField.innerText = "Chansa, vetja! Hälften vunnet..."
+    }
+}
 
 
 function disableOptions() {
@@ -274,12 +313,18 @@ function disableOptions() {
         optionButtons[i].disabled = true;
     }
 }
+function enableOptions() {
+    const optionButtons = document.getElementsByClassName("options");
+    for (let i = 0; i < optionButtons.length; i++) {
+        optionButtons[i].enabled = true;
+    }
+}
 
+// Quizzet avslutas parametrar nollställs
 function endQuiz() {
-    clearDiv();
-    // ny setup - ett fråge-block
 
-    console.log("quiz klart")
+    clearDiv();
+    //  console.log("quiz klart")
 
     reStartButton.className = "button"
     reStartButton.innerText = "Restart the quiz"
@@ -287,8 +332,102 @@ function endQuiz() {
     elementBox.append(questionParagraph, reStartButton);
     // lägger till <p>
     questionParagraph.innerHTML = `Nu är quizet slut. <br> Du fick ${points} poäng av 8 möjliga. <br> Vill du ta testet igen?`
+    points = 0;
+    randomizeArray(quizData);
+    questionArrayIndex = 0;
 
+    // lyssnar efter signal att starta om
     reStartButton.addEventListener("click", clickStart)
+
 
 }
 
+
+function countDownSetup() {
+    countDownVisual.id = "interval-timer";
+    elementBox.append(countDownVisual);
+    console.log("countDownSetup - nedräknare tillagd")
+}
+
+// OBS GEMINIS KOD:
+function runCountDown() {
+    let count = 10;
+
+    let countDown = setInterval(() => {
+        // Kolla alltid om questionAnswered är true först
+        if (questionAnswered === true) {
+            clearInterval(countDown);
+            // Gör något när frågan besvarats, t.ex.:
+            disableOptions();
+            countDownVisual.innerText = "Du svarade innan tiden gick ut!";
+            return; // Avsluta funktionen
+        }
+
+        // Om frågan inte är besvarad och count är större än 0, fortsätt nedräkningen
+        if (count > 0) {
+            countDownVisual.innerText = `${count} sekunder kvar`;
+            console.log("count: ", count);
+        } else { // Om tiden är ute
+            clearInterval(countDown);
+            disableOptions();
+            countDownVisual.innerText = "Ajdå! Du hann visst inte svara."
+            feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga.";
+        }
+        count--;
+    }, 1000);
+}
+
+/* // Skapar en nedräknare     FUNKAR INTE HELLER
+function runCountDown() {
+    let count = 10;
+
+    // setInterval() skapar en loop som körs med jämna mellanrum. I detta fall varje sekund. 
+    const countDown = setInterval(() => {
+        console.log("svarat på frågan? : ", questionAnswered)
+        if (questionAnswered == true) {  // Avbryter intervallet när det inte längre behövs för att undvika oändliga loopar.           
+            clearInterval(countDown);
+            disableOptions();
+            return;
+        } else
+            if (count > 0) {
+                countDownVisual.innerText = `${count} sekunder kvar`;
+                console.log("count: ", count);
+
+            } else {     // Avbryter intervallet med time-out efter 10 s.
+                clearInterval(countDown);
+                disableOptions();
+                countDownVisual.innerText = "Ajdå! Du hann visst inte svara."
+                feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga."
+            }
+        count--;
+    }, 1000); //setInterval slut  feedback varje sekund (1000 ms)
+} */
+
+/* 
+OBS FEL nedan pga oändlig fortsättning om count > 0 !!  Behövs return på RÄTT ställe - Bra försök Ewa ;)
+
+// Skapar en nedräknare 
+function runCountDown() {
+    let count = 10;
+
+    // setInterval() skapar en loop som körs med jämna mellanrum. I detta fall varje sekund. 
+    const countDown = setInterval(() => {
+        if (questionAnswered == true) {  // Avbryter intervallet när det inte längre behövs för att undvika oändliga loopar.           
+            clearInterval(countDown);
+        } else
+            if (count > 0) {
+                countDownVisual.innerText = `${count} sekunder kvar`;
+                console.log("count: ", count);
+
+            } else {     // Avbryter intervallet med time-out efter 10 s.
+                clearInterval(countDown);
+                disableOptions();
+                countDownVisual.innerText = "Ajdå! Du hann visst inte svara."
+                feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga."
+            }
+        count--;
+    }, 1000); //setInterval slut  feedback varje sekund (1000 ms)
+}
+
+// function stopCountDown(){} // OBS finns redan inbyggt clearInterval(id)
+ */
