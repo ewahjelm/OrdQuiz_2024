@@ -19,9 +19,8 @@ var quizData = []; // sätts med fetch
 // räknar hela quizet
 var questionArrayIndex = 0;
 var points = 0;
-// parametrar som startas om inför varje fråga
 // OBS gör räknaren global iaf!!
-var countDown = "";
+// parametrar som startas om inför varje fråga
 var timeLeft = 10;
 var questionAnswered = false;
 // OBS kolla även att valen är klickbara (enabled)
@@ -106,7 +105,6 @@ function clickStart() {
     addEventListenersToOptionButtons();
 
     //visar första frågan . Körs från questionArrayIndex = 0 satt och deklarerat högst upp i main.js
-    //OBS visar första frågan och nollställer parametrar
     renderNewQuestion();
 
 }
@@ -133,14 +131,59 @@ function addEventListenerToStartButton() {
     startQuizButton.addEventListener("click", clickStart);
 }
 
+/* function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const choice = event.target;
+            console.log("valt alternativ ! ", choice)
+            questionAnswered = true;
+            validateOptionClick(choice);
+        });
+    }
+}
+    */
 
+
+// OBS att det behövs en anonym funktion för att hantera data utan att köra funktionen selectingAnswer direkt
+/* function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", selectingAnswer(chosenButton));
+    }
+}
+
+function selectingAnswer(chosenButton) {
+    questionAnswered = true;
+    compareOptionToAnswer(chosenButton);
+}
+
+OBS Här har jag bakat ihop dessa två funktioner i den anonyma nedan ->
+*/
+/* 
+function addEventListenersToOptionButtons() {
+    for (let i = 0; i < 4; i++) {
+        const chosenButton = document.getElementById(`opt-${i}`);
+        chosenButton.addEventListener("click", function (event) {
+            questionAnswered = true;
+            // OBS HITTADE FELET NEDAN
+            runCountDown();
+            const clickedButton = event.target;
+            compareOptionToAnswer(clickedButton);
+        });
+    }
+} */
 
 function addEventListenersToOptionButtons() {
     for (let i = 0; i < 4; i++) {
         const chosenButton = document.getElementById(`opt-${i}`);
         chosenButton.addEventListener("click", function (event) {
             event.preventDefault();
-            questionAnswered = true;  // VIKTIGT  ger två vägar vid klick på next button 
+            questionAnswered = true;// VIKTIGT  ger två vägar next button sedan
+            // OBS HITTADE FELET NEDAN  ELLER funkar det med global variabel??
+            //  runCountDown();  // ska inte köras här
+            // Det var fel, men också ett annat : questionAnssewred ska ge next knapp rätt utgång
             const clickedButton = event.target;
             compareOptionToAnswer(clickedButton);
         });
@@ -169,7 +212,6 @@ se addEventListenersToOptionButtons -> (anonymfunktion lagrar vilken knapp som a
 
 */
 function renderNewQuestion() {   //  NÄR KÖRS  ?????????????????????????????????????????? 
-    resetQuestionParameters();
     timeLeft = 10;  // tid 10 s på varje fråga
     feedbackField.innerText = "";
     questionAnswered = false;
@@ -219,14 +261,14 @@ function createAndAppendNextButton() {
 }
 
 
+/* 
 
-
-/*Körs efter att användaren klickat på något av svarsalternativen:
-Se anonym funktion i addEventListenersToOptionButtons som skickar valet vidare */
+Körs efter att användaren klickat på något av svarsalternativen:
+Se anonym funktion i addEventListenersToOptionButtons som skickar valet vidare 
 // OBS kommer inte till nästa fråga nu . Denna behöver köras från next-knapp när ett option är gjort oavsett rätt/fel
 function compareOptionToAnswer(choice) {
     console.log("Jämför ditt svar med rätt svar")
-    // console.log("Kontroll qA : ", questionAnswered);
+    console.log("Kontroll qA : ", questionAnswered);
     const selectedAnswer = choice.innerText;
     // console.log("Valt svar = ", selectedAnswer)
     const correctAnswer = quizData[questionArrayIndex].answer
@@ -234,22 +276,25 @@ function compareOptionToAnswer(choice) {
 
     // ge feedback för rätt resp fel svar
     giveFeedBack(selectedAnswer == correctAnswer);
-    console.log("qAIndex", questionArrayIndex)
+    console.log(questionArrayIndex, "fråga index")
     console.log("OBS kontroll av questionAnswered: ", questionAnswered)
+
+    //   OBS  clearInterval "blockscopad" -> gör om till global variabel.
+
 
     // efter 8 frågor är quizet slut
     if (questionArrayIndex >= 7) {
         disableOptions();
         endQuiz();
-    } else {  // OBS att jag glömt uppdatera Q-index
+    } else {
+        console.log("compare körs Frågan rättad")
         // avsluta session - förbered för ny   resetQuestion
-        console.log("compare körs: Frågan rättad. Här ska du också få en ny fråga")
-        questionArrayIndex++;
-        clearInterval(countDown); // för säkerhets skull
         // efter rättning av fråga 1-7  väntar nytt klick på nästa knapp för att initiera nästa fråga ----------------bygg på andra
-        renderNewQuestion();
     }
-}
+} */
+// Ovan blev istället
+
+
 
 function giveFeedBack(wasCorrect) {
     if (wasCorrect) {
@@ -265,24 +310,35 @@ function giveFeedBack(wasCorrect) {
     }
 }
 
+// OBS  HUR KOMMER MAN FRÅN NEXT KNAPP om man svarat ?????????????
+// SÅKLART FEL ÄVEN HÄR
 
+/* //    Körs endast  på klick från "Nästa fråga-knappen" - alltså om man inte valt något alternativ.
+function validateAnOptionIsClicked() {
+    console.log("validerar att du valt en knapp")
+    // Om tiden gått ut får man ingen uppmaning att svara utan hamnar i ranOutOfTime istället.
+    if (timeLeft <= 0) {
+        ranOutOfTime(); // fortsätter att avsluta timer-session och vänta på klick nästa
 
+        //eftersom man inte behöver trycka på nästa-knappen om man klickat på ett alternativ
+    } else if (questionAnswered != true) {  ///FUNGERAR??
+        console.log("du har inte tryckt på något alternativ")
+        feedbackField.innerText = "Chansa, vetja! Hälften vunnet..."
+        // tiden har inte gått ut &  frågan är besvarad -> 
+        //  -> då körs en respons från optionbutton med questionAnswered true-> compareOptionToAnswer  OBS ???????????????
+    } else { console.log("hamnade i validate") }//  vänta på nytt tryck nästa knapp  compareOptionToAnswer();  MEN SKA INTE RÄTTA - DET ÄR REDAN GJORT JU!
+    // förbererd för ny fråga:
+} */
 
-// OBS  HUR KOMMER MAN FRÅN NEXT KNAPP om mna svarat ?????????????
-// Måste få med datan om vilken knapp som tryckts vidare
-// OBS   Körs endast  på klick från "Nästa fråga-knappen" - alltså OM MAN INTE VALT något alternativ.
-function validateAnOptionIsClicked(choice) {
-    console.log("validerar om du valt en knapp") // med ett enkelt questionAnswered såklart
-    console.log("qA?: ", questionAnswered)
+//   OBS INFOGA NYA - Rätta koden
+//    Körs endast  på klick från "Nästa fråga-knappen" - alltså OM MAN INTE VALT något alternativ.
+function validateAnOptionIsClicked() {
+    console.log("validerar att du valt en knapp") // med ett enkelt questionAnswered såklart
     if (questionAnswered != true) {
         console.log("du har inte tryckt på något alternativ")
         feedbackField.innerText = "Chansa, vetja! Hälften vunnet..."
-    } else if (questionAnswered == true) {
-        console.log("du har svarat och ska nu få en ny fråga")
-        renderNewQuestion();
-    }
+    } else console.log("hamnade i validate");
 }
-
 
 
 
@@ -329,10 +385,12 @@ function countDownSetup() {
     console.log("countDownSetup - nedräknare tillagd")
 }
 
+// OBS GEMINIS KOD:
+// OBS NÄR i koden ska timern tas bort med clearInterval?
 
 // Kör en global nedräknare
 function runCountDown() {
-    countDown = setInterval(() => {
+    let countDown = setInterval(() => {
         // Körs när frågan besvarats- alltså via validateAnOptionIsClicked
         if (questionAnswered == true) {
             resetQuestionParameters(countDown);
@@ -359,14 +417,68 @@ function resetQuestionParameters(countDown) {
     timeLeft = 10;  // starta tid vid ny fråga istället?????????????
 }
 
-/* Körs OBS  & åtkomst till countDown  
+/* Körs OBS  & åtkomst till countDown    ???????????????????????????????????
 1. Om tiden tar slut utan att något val gjorts
+2. 
 */
 function ranOutOfTime(countDown) {
     disableOptions();
-    clearInterval(countDown); // för säkerhets skull
     countDownVisual.innerText = "Ajdå! Du hann visst inte svara.";
     feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga.";
-    // fortsätter vid knapptryck på nästa
+    resetQuestionParameters(countDown);   // OBS kör denna samtidigt som ny fråga ses -----------------    // fortsätter vid knapptryck på nästa
+    // fortsätter vid knapptryckbpå nästa
 }
 
+/* // Skapar en nedräknare     FUNKAR INTE HELLER
+function runCountDown() {
+    let count = 10;
+
+    // setInterval() skapar en loop som körs med jämna mellanrum. I detta fall varje sekund. 
+    const countDown = setInterval(() => {
+        console.log("svarat på frågan? : ", questionAnswered)
+        if (questionAnswered == true) {  // Avbryter intervallet när det inte längre behövs för att undvika oändliga loopar.           
+            clearInterval(countDown);
+            disableOptions();
+            return;
+        } else
+            if (count > 0) {
+                countDownVisual.innerText = `${count} sekunder kvar`;
+                console.log("count: ", count);
+
+            } else {     // Avbryter intervallet med time-out efter 10 s.
+                clearInterval(countDown);
+                disableOptions();
+                countDownVisual.innerText = "Ajdå! Du hann visst inte svara."
+                feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga."
+            }
+        count--;
+    }, 1000); //setInterval slut  feedback varje sekund (1000 ms)
+} 
+
+OBS FEL nedan pga oändlig fortsättning om count > 0 !!  Behövs return på RÄTT ställe - Bra försök Ewa ;)
+
+// Skapar en nedräknare 
+function runCountDown() {
+    let count = 10;
+
+    // setInterval() skapar en loop som körs med jämna mellanrum. I detta fall varje sekund. 
+    const countDown = setInterval(() => {
+        if (questionAnswered == true) {  // Avbryter intervallet när det inte längre behövs för att undvika oändliga loopar.           
+            clearInterval(countDown);
+        } else
+            if (count > 0) {
+                countDownVisual.innerText = `${count} sekunder kvar`;
+                console.log("count: ", count);
+
+            } else {     // Avbryter intervallet med time-out efter 10 s.
+                clearInterval(countDown);
+                disableOptions();
+                countDownVisual.innerText = "Ajdå! Du hann visst inte svara."
+                feedbackField.innerText = "Du har 10 sekunder på dig på varje fråga."
+            }
+        count--;
+    }, 1000); //setInterval slut  feedback varje sekund (1000 ms)
+}
+
+// function stopCountDown(){} // OBS finns redan inbyggt clearInterval(id)
+*/
